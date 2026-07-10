@@ -1,0 +1,45 @@
+name: Build and Push FastAPI to ACR
+
+on:
+  push:
+    branches:
+      - main
+  # Allows manual triggering
+  workflow_dispatch: 
+
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+  IMAGE_NAME: fastapi-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ env.ACR_USERNAME }}
+          password: ${{ env.ACR_PASSWORD }}
+
+      - name: Build and Push Docker image
+        run: |
+          # Use commit SHA for unique, traceable image tags
+          IMAGE_TAG=${{ github.sha }}
+          FULL_IMAGE_PATH="${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}"
+          
+          # Build the image
+          docker build -t $FULL_IMAGE_PATH:$IMAGE_TAG .
+          
+          # Tag as latest as well
+          docker tag $FULL_IMAGE_PATH:$IMAGE_TAG $FULL_IMAGE_PATH:latest
+          
+          # Push both tags to ACR
+          docker push $FULL_IMAGE_PATH:$IMAGE_TAG
+          docker push $FULL_IMAGE_PATH:latest
