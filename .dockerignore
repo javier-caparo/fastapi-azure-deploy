@@ -12,19 +12,17 @@ env/
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # Environment
 .env
 .env.local
-
-# OS
-.DS_Store
-Thumbs.db
 
 # Testing
 .pytest_cache/
 coverage/
 htmlcov/
 .coverage
+
+# Git
+.git/
+.gitignore
