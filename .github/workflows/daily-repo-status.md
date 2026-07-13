@@ -13,6 +13,8 @@ safe-outputs:
     title-prefix: "[daily-status] "
     labels: [report, daily-status]
     close-older-issues: true
+
+engine: copilot   # Default — GitHub Copilot
 ---
 
 ## Daily Repository Status Report
